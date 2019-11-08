@@ -1,4 +1,29 @@
 
+const pick = (array) => {
+  const i = Math.floor(Math.random() * array.length)
+  return array[i]
+}
+
+const random = () => {
+  const remotehost = '127.0.0.1'
+  const rfc931 = '-'
+  const authuser = pick(['james', 'jill', 'frank', 'mary'])
+  const date = '[09/May/2018:16:00:39 +0000]'
+  const request = '"' + pick(['GET', 'POST']) + ' '+pick(['/report', '/api/user']) + ' HTTP/1.0"'
+  const status = pick(['200', '400', '500', '300'])
+  const bytes = pick(['123', '15', '656'])
+
+  return [
+    remotehost,
+    rfc931,
+    authuser,
+    date,
+    request,
+    status,
+    bytes
+  ].join(' ')
+}
+
 // https://www.w3.org/Daemon/User/Config/Logging.html
 
 const many_no_space = '([^ ]+)'
@@ -53,6 +78,8 @@ const getRequestUri = a => a[8]
 const getSection = a => a[9]
 
 module.exports = {
+  random,
+
   parse,
 
   getRemotehost,

@@ -85,4 +85,12 @@ describe('HttpAccessLog', () => {
       '/api',
     ]
   )
+
+  expect(() =>
+    test(
+      '127.0.0.1 - bad formated [ht]tp access log "POST /api/user HTTP/1.0" 503 12',
+      []
+    )
+  ).to.throw
+  
 })

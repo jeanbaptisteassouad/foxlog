@@ -5,6 +5,7 @@ const HttpAccessLog = require(root_path + '/http-access-log')
 
 const [getSection, setSection] = Accessors.create()
 const [getStatus, setStatus] = Accessors.create()
+const [getBytes, setBytes] = Accessors.create()
 
 const empty = () => {
   const a = {}
@@ -20,9 +21,11 @@ const fromHttpAccessLog = (hal) => {
 
   const section = HttpAccessLog.getSection(hal)
   const status = HttpAccessLog.getStatus(hal)
+  const bytes = HttpAccessLog.getBytes(hal)
 
   setSection(section, a)
   setStatus(Number(status), a)
+  setBytes(Number(bytes), a)
 
   return a
 }
@@ -40,6 +43,7 @@ module.exports = {
   fromHttpAccessLog,
 
   getSection,
+  getBytes,
 
   hasErrorStatus,
 }

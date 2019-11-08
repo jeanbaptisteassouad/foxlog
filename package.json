@@ -10,6 +10,7 @@
     "test": "mocha \"./src/**/*.test.js\""
   },
   "devDependencies": {
+    "tail": "2.0.3",
     "chai": "4.2.0",
     "mocha": "6.1.4"
   }
