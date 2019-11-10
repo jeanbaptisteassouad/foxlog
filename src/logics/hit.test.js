@@ -1,17 +1,18 @@
 const chai = require('chai')
 const expect = chai.expect
 
-const root_path = '.'
-const HttpAccessLog = require(root_path + '/http-access-log')
-const Hit = require(root_path + '/hit')
+const root_path = '..'
+const HttpAccessLog = require(root_path + '/parsers/http-access-log')
+const Hit = require(root_path + '/logics/hit')
 
 describe('Hit', () => {
   const test = (str, array) => it(str, () => {
-    const ans = Hit.fromHttpAccessLog(HttpAccessLog.parse(str))
+    const ans = Hit.fromHttpAccessLog(HttpAccessLog.fromStr(str))
 
     expect(Hit.getSection(ans)).to.equal(array[0])
     expect(Hit.hasErrorStatus(ans)).to.equal(array[1])
     expect(Hit.getBytes(ans)).to.equal(array[2])
+    expect(Hit.getEpoch(ans)).to.equal(array[3])
   })
 
   test(
@@ -19,7 +20,8 @@ describe('Hit', () => {
     [
       '/report',
       false,
-      123
+      123,
+      new Date(2018, 4, 9, 16, 0, 39).getTime()
     ]
   )
 
@@ -28,7 +30,8 @@ describe('Hit', () => {
     [
       '/api',
       false,
-      234
+      234,
+      new Date(2018, 4, 9, 16, 0, 41).getTime()
     ]
   )
 
@@ -37,7 +40,8 @@ describe('Hit', () => {
     [
       '/api',
       false,
-      34
+      34,
+      new Date(2018, 4, 9, 16, 0, 42).getTime()
     ]
   )
 
@@ -46,7 +50,8 @@ describe('Hit', () => {
     [
       '/api',
       true,
-      12
+      12,
+      new Date(2018, 4, 9, 16, 0, 42).getTime()
     ]
   )
 

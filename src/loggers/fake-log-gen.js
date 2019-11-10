@@ -1,6 +1,6 @@
-const root_path = '.'
+const root_path = '..'
 
-const HttpAccessLog = require(root_path + '/http-access-log')
+const HttpAccessLog = require(root_path + '/parsers/http-access-log')
 const Fs = require('fs')
 
 const start = (period_ms, path) => {

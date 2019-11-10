@@ -1,9 +1,9 @@
 const root_path = '.'
 
-const HttpAccessLog = require(root_path + '/http-access-log')
-const Hit = require(root_path + '/hit')
-const Synthesis = require(root_path + '/synthesis')
-const AverageHitTracker = require(root_path + '/average-hit-tracker')
+const HttpAccessLog = require(root_path + '/parsers/http-access-log')
+const Hit = require(root_path + '/logics/hit')
+const Synthesis = require(root_path + '/logics/synthesis')
+const Logger = require(root_path + '/loggers/logger')
 
 
 
@@ -13,22 +13,18 @@ if (process.argv[2] !== undefined) {
   path = process.argv[2]
 }
 
-let hit_per_second_limit = 10
-if (process.argv[3] !== undefined) {
-  hit_per_second_limit = process.argv[3]
-}
+// let hit_per_second_limit = 10
+// if (process.argv[3] !== undefined) {
+//   hit_per_second_limit = process.argv[3]
+// }
 
+const tail = (lineCallback) => {
+  const Tail = require('tail').Tail
 
-
-
-let lines = []
-const startToWatchFile = () => {
-  Tail = require('tail').Tail
-
-  tail = new Tail(path)
+  const tail = new Tail(path)
 
   tail.on('line', (data) => {
-    lines.push(data)
+    lineCallback(data)
   })
 
   tail.on('error', (error) => {
@@ -37,50 +33,57 @@ const startToWatchFile = () => {
 }
 
 
-// to extract log logic from synthesis and average-hit-tracker
+let hits = []
+tail((line) => {
+  try {
+    hits.push(Hit.fromHttpAccessLog(HttpAccessLog.fromStr(line)))
+  } catch (e) {
 
-// a chaque line on push un hit
-// on peut avoir des stats en fonction des dates
+  }
+})
 
-const refresh_ms = 10000
+
+// const refresh_ms = 10000
+// const filter_threshold_ms = 120000
+
+const refresh_ms = 1000
+const filter_threshold_ms = 12000
 
 // we use 12 for the size of the window,
 // because refresh_ms * window_size must equal
 // 2 minute
-const window_size = 12
+// const window_size = 12
 
-const hit_per_10_seconds_limit = hit_per_second_limit * 10
-let hits_tracker = AverageHitTracker.empty(hit_per_10_seconds_limit, window_size)
-
-const loop = () => {
-  setInterval(() => {
-    const hals = []
-    lines.forEach((line) => {
-      try {
-        hals.push(HttpAccessLog.parse(line))
-      } catch (e) {
-
-      }
-    })
-    const hits = hals.map(Hit.fromHttpAccessLog)
-
-    const synthesis = Synthesis.fromHits(hits)
-
-    AverageHitTracker.pushHitNumber(Synthesis.getTotalHits(synthesis), hits_tracker)
-
-    console.log(AverageHitTracker.toStr(hits_tracker))
-    console.log(Synthesis.toStr(synthesis))
-
-    lines = []
-  }, refresh_ms)
-}
+// const hit_per_10_seconds_limit = hit_per_second_limit * 10
+// let hits_tracker = AverageHitTracker.empty(hit_per_10_seconds_limit, window_size)
 
 
-startToWatchFile()
-loop()
+setInterval(() => {
+  // const synthesis = Synthesis.fromHits(hits)
+
+  // AverageHitTracker.pushHitNumber(Synthesis.getTotalHits(synthesis), hits_tracker)
 
 
-require(root_path + '/fake-log-gen').start(500, path) /////////////////
+  const now = new Date().getTime()
+  const in_the_last_ms = refresh_ms
+
+  const most_visited_sections = Synthesis.xMostVisitedSections(10, in_the_last_ms, now, hits)
+  const total_hits = Synthesis.totalHits(in_the_last_ms, now, hits)
+  const total_bytes = Synthesis.totalBytes(in_the_last_ms, now, hits)
+
+  const average_hit_per_sec = Synthesis.averageHitPerSec(filter_threshold_ms, now, hits)
+  console.log(average_hit_per_sec)
+
+  console.log(Logger.log(most_visited_sections, total_hits, total_bytes, in_the_last_ms))
+  // console.log(AverageHitTracker.toStr(hits_tracker))
+  // console.log(Synthesis.toStr(synthesis))
+
+  hits = Synthesis.filterHits(filter_threshold_ms, now, hits)
+}, refresh_ms)
+
+
+
+require(root_path + '/loggers/fake-log-gen').start(500, path) /////////////////
 
 
 
