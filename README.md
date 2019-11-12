@@ -35,3 +35,24 @@ node ./src/main.js /tmp/mylog.log 9 true
 You can use the dockerfile to build a docker image that will behave exactly like the app.
 
 
+## Architecture
+
+The app is divided into 3 pieces :
+* The parsers
+* The logics
+* The loggers
+
+The parser modules are responsible for extracting all the data of the w3c-formatted HTTP access logs.
+
+The logic modules represent all the logic of the app, there is a module that represents and handles hits (hit.js), a module that analyses a list of hits (synthesis.js), and a module that manages the alerts (alert-manager.js).
+
+The logger modules are responsible for mapping the output of logic functions to logging string that will be displayed to the screen.
+
+## Tests
+
+To run the tests : 
+
+```
+yarn test
+```
+
