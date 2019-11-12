@@ -2,7 +2,7 @@
 
 ## Description
 
-Foxlog is a simple console application that monitor a w3c-formatted HTTP access log. It will display on the screen the most visited section of the website, the total number of hits and the total number of bytes transferred during the last 10 seconds.
+Foxlog is a simple console application that monitor a [w3c-formatted HTTP access log](https://www.w3.org/Daemon/User/Config/Logging.html). It will display on the screen the most visited section of the website, the total number of hits and the total number of bytes transferred during the last 10 seconds.
 
 Foxlog manages an alert system that tracks whenever the average hit per second exceed a threshold during the last 2 minutes. The history of alerts will stay on screen until the app is closed.
 
@@ -55,4 +55,13 @@ To run the tests :
 ```
 yarn test
 ```
+
+## Suggested improvement
+
+For the moment, foxlog does not handle the time zone of dates of the log (09/May/2018:16:00:39 __+0000__).
+
+Adding a better way to manage the console line arguments and adding a help section (-h).
+
+Adding more statistics.
+
 
