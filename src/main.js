@@ -21,7 +21,10 @@ if (process.argv[2] !== undefined) {
 
 let hit_per_second_limit = 10
 if (process.argv[3] !== undefined) {
-  hit_per_second_limit = process.argv[3]
+  hit_per_second_limit = Number(process.argv[3])
+  if (isNaN(hit_per_second_limit)) {
+    throw new Error('hit_per_second_limit : "'+hit_per_second_limit+'" is not a number')
+  }
 }
 
 if (process.argv[4] === 'true') {
