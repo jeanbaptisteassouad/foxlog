@@ -25,7 +25,7 @@ const totalHits = (total_hits, in_the_last_ms) => {
 const alerts = (alerts) => {
   let str = ''
 
-  str += 'Average hit per seconds alerts historic : \n'
+  str += 'Average hits per seconds alerts historic : \n'
 
   if (alerts.length === 0) {
     str += '-- No Alerts --'
@@ -36,7 +36,7 @@ const alerts = (alerts) => {
     const time = new Date(a[0])
     if (a.length === 2) {
       const value = a[1]
-      return `High traffic generated an alert - hits = ${value}, triggered at ${time}`
+      return `High traffic generated an alert - average hits per seconds = ${value}, triggered at ${time}`
     } else {
       return `Traffic back to normal at ${time}`
     }
